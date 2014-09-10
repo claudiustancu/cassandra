@@ -16,24 +16,32 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Controller
 public class HomeController {
-	
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
-	
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(HomeController.class);
+
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model) {
 		logger.info("Welcome home! The client locale is {}.", locale);
-		
+
 		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-		
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG,
+				DateFormat.LONG, locale);
+
 		String formattedDate = dateFormat.format(date);
+		model.addAttribute("serverTime", formattedDate);
+		CassandraSimpleClient client = new CassandraSimpleClient();
 		
-		model.addAttribute("serverTime", formattedDate );
-		
+		client.connect("127.0.0.1");
+		client.createSchema();
+		client.getSession().execute("INSERT INTO simplex.users (name, role) VALUES (", "me" + ", " + "developer" + ");");
+		System.out.print(client.getSession().execute(
+				"SELECT * from simplex.users"));
+		client.close();
+
 		return "home";
 	}
-	
 }
