@@ -3,6 +3,7 @@ package com.sample.cassandra;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,8 @@ public class HomeController {
 		
 		client.connect("127.0.0.1");
 		client.createSchema();
-		client.getSession().execute("INSERT INTO simplex.users (name, role) VALUES (", "me" + ", " + "developer" + ");");
+		client.getSession().execute("INSERT INTO simplex.users (id, name, role) "
+		        + "VALUES (" + UUID.randomUUID() + ", 'Cezar', 'Developer');");
 		System.out.print(client.getSession().execute(
 				"SELECT * from simplex.users"));
 		client.close();
