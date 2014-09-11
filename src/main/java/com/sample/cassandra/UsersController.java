@@ -26,8 +26,9 @@ public class UsersController {
 	public String get(Locale locale, Model model) {
 
 		CassandraSimpleClient client = new CassandraSimpleClient();
-
 		client.connect("127.0.0.1");
+		client.createSchema();
+		
 		model.addAttribute("serverTime",
 				client.getSession().execute("SELECT * from simplex.users"));
 		client.close();
@@ -36,14 +37,15 @@ public class UsersController {
 	}
 
 	@ResponseStatus(CREATED)
-	@RequestMapping(method = RequestMethod.POST)
-	public void post(@RequestBody User user) {
+	@RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/json")
+	public void create(@RequestBody User user) {
 		CassandraSimpleClient client = new CassandraSimpleClient();
 		client.connect("127.0.0.1");
+		client.createSchema();
 
 		client.getSession().execute(
 				"INSERT INTO simplex.users (id, name, role) VALUES ("
-						+ UUID.randomUUID() + ", " + user.getName() + ", "
-						+ user.getRole() + ");");
+						+ UUID.randomUUID() + ", '" + user.getName() + "', '"
+						+ user.getRole() + "');");
 	}
 }
