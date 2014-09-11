@@ -24,10 +24,10 @@ public class CassandraSimpleClient {
 	}
 
 	public void createSchema() {
-		session.execute("CREATE KEYSPACE simplex WITH replication "
-				+ "= {'class':'SimpleStrategy', 'replication_factor':3};");
-
-		session.execute("CREATE TABLE simplex.users (" + "id uuid PRIMARY KEY,"
+		session.execute("CREATE KEYSPACE IF NOT EXISTS simplex WITH replication "
+				+ "= {'class':'SimpleStrategy', 'replication_factor':1};");
+		
+		session.execute("CREATE TABLE IF NOT EXISTS simplex.users (" + "id uuid PRIMARY KEY,"
 				+ "name text," + "role text,);");
 	}
 
